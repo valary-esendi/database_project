@@ -52,27 +52,81 @@ const userData = [
     { user_id: 21, user_name: 'Ulysses Wright', age: 40, weight: 95, height: 1.9, food_item: 'Oatmeal', portion_size: 1, eating_date: '2023-10-20', activity_type: 'Soccer', duration: 45, activity_date: '2023-11-18' },
 ];
 
+
 // Function to populate the table
-function populateTable() {
+
+function populateTable(data) {
     const tableBody = document.getElementById('userTableBody');
-    users.forEach(user => {
+    tableBody.innerHTML = ''; // Clear previous data
+    data.forEach(user => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${user.id}</td>
-            <td>${user.name}</td>
+            <td>${user.user_id}</td>
+            <td>${user.user_name}</td>
             <td>${user.age}</td>
             <td>${user.weight}</td>
             <td>${user.height}</td>
-            <td>${user.food}</td>
-            <td>${user.portion}</td>
-            <td>${user.eatingDate}</td>
-            <td>${user.activity}</td>
+            <td>${user.food_item}</td>
+            <td>${user.portion_size}</td>
+            <td>${user.eating_date}</td>
+            <td>${user.activity_type}</td>
             <td>${user.duration}</td>
-            <td>${user.activityDate}</td>
+            <td>${user.activity_date}</td>
+            <td><button class="deleteButton" onclick="deleteUser(${user.user_id})">Delete</button></td>
         `;
         tableBody.appendChild(row);
     });
 }
+
+// Initial display of all user data
+populateTable(userData);
+
+// Search functionality
+document.getElementById('searchButton').addEventListener('click', function() {
+    const searchValue = document.getElementById('search').value.toLowerCase();
+    
+    if (!searchValue) {
+        populateTable(userData);
+        return;
+    }
+
+    const filteredUsers = userData.filter(user => 
+        user.user_name.toLowerCase() === searchValue
+    );
+
+    if (filteredUsers.length > 0) {
+        populateTable(filteredUsers);
+    } else {
+        document.getElementById('userTableBody').innerHTML = '<tr><td colspan="12">No records found.</td></tr>';
+    }
+});
+
+// Add User functionality
+document.getElementById('addUserButton').addEventListener('click', function() {
+    const newUser = {
+        user_id: userData.length + 1, // Simple ID increment
+        user_name: prompt('Enter user name:'),
+        age: prompt('Enter age:'),
+        weight: prompt('Enter weight:'),
+        height: prompt('Enter height:'),
+        food_item: prompt('Enter food item:'),
+        portion_size: prompt('Enter portion size:'),
+        eating_date: prompt('Enter eating date (YYYY-MM-DD):'),
+        activity_type: prompt('Enter activity type:'),
+        duration: prompt('Enter duration (min):'),
+        activity_date: prompt('Enter activity date (YYYY-MM-DD):')
+    };
+
+    userData.push(newUser);
+    populateTable(userData);
+});
+
+// Delete User functionality
+function deleteUser(userId) {
+    userData = userData.filter(user => user.user_id !== userId);
+    populateTable(userData);
+}
+
 
 // Call the function when the page loads
 window.onload = populateTable;
